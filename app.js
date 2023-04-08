@@ -4,6 +4,7 @@ const path = require("path");
 const sqlite3 = require("sqlite3");
 
 const app = express();
+app.use(express.json());
 
 const dbPath = path.join(__dirname, "moviesData.db");
 
@@ -39,3 +40,21 @@ app.get("/movies/", async (request, response) => {
   moviesList = moviesList.map(convertToCamelCase);
   response.send(moviesList);
 });
+
+// Post API
+
+app.post("/movies/", async (request, response) => {
+  const movieDetails = request.body;
+  //   console.log(request.body);
+  const { directorId, movieName, leadActor } = movieDetails;
+
+  const addMovieQuery = `
+    INSERT INTO
+    movie (director_id, movie_name, lead_actor)
+    VALUES (${directorId}, '${movieName}', '${leadActor}')`;
+
+  await db.run(addMovieQuery);
+  response.send("Movie Successfully Added");
+});
+
+module.exports = app;
